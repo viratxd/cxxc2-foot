@@ -22,7 +22,10 @@ export type CoinSearchResult = { id: string; name: string; symbol: string; thumb
 export type ProfileRow = { price: number; volume: number; bidVol: number; askVol: number };
 
 export type FootprintProps = {
-  symbol: string;
+  /** Full trading pair, e.g. "BTCUSDT". Overrides `coin` if both are given. */
+  symbol?: string;
+  /** Short coin name, e.g. "btc" or "BTC" — converted to "BTCUSDT" automatically. */
+  coin?: string;
   timeframe?: string;
   dark?: boolean;
   mode?: ViewMode;
@@ -34,6 +37,12 @@ export type FootprintProps = {
   onCandleSelect?: (candle: Candle | null) => void;
   onHover?: (info: HoverInfo) => void;
 };
+
+/** Convert a short coin name like "btc" to a Binance USDT pair like "BTCUSDT". */
+export function toSymbol(coin: string): string {
+  const clean = coin.trim().toUpperCase().replace(/USDT$/, '').replace(/[-/]/g, '');
+  return `${clean}USDT`;
+}
 
 export type ImbalanceSide = 'bid' | 'ask' | null;
 

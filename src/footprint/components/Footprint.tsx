@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BarChart3, Crosshair, Loader2, Maximize2, Minus, MousePointer2, PanelRight, Play, RotateCcw, Settings2, SlidersHorizontal, Sparkles, Wifi, WifiOff, X, Zap, ZoomIn } from 'lucide-react';
-import { COLORS, TIMEFRAMES, type Candle, type FootprintProps, type HoverInfo, type ViewMode } from '../types';
+import { COLORS, TIMEFRAMES, toSymbol, type Candle, type FootprintProps, type HoverInfo, type ViewMode } from '../types';
 import { compact, fmtPrice } from '../utils/format';
 import { getImbalance } from '../utils/footprint';
 import { useFootprintData } from '../hooks/useFootprintData';
@@ -9,6 +9,7 @@ import { CoinSearch } from './CoinSearch';
 
 export function Footprint({
   symbol,
+  coin,
   timeframe = '1h',
   dark = true,
   mode: initialMode = 'footprint',
@@ -20,12 +21,17 @@ export function Footprint({
   onHover: onHoverProp,
 }: FootprintProps) {
   const [mode, setMode] = useState<ViewMode>(initialMode);
-  const [timeframeState, setTimeframe] = useState(timeframe);
   const [darkState, setDark] = useState(dark);
   const [showProfile, setShowProfile] = useState(initialProfile);
   const [showImbalance, setShowImbalance] = useState(initialImbalance);
   const [hover, setHover] = useState<HoverInfo>(null);
-  const [symbolState, setSymbol] = useState(symbol);
+
+  const resolvedSymbol = symbol ?? toSymbol(coin ?? 'BTC');
+  const [symbolState, setSymbol] = useState(resolvedSymbol);
+  const [timeframeState, setTimeframe] = useState(timeframe);
+
+  useEffect(() => { setSymbol(symbol ?? toSymbol(coin ?? 'BTC')); }, [symbol, coin]);
+  useEffect(() => { setTimeframe(timeframe); }, [timeframe]);
 
   const { data, loading, dataSource, lastUpdate, fetchingTicks, selectedCandle, setSelectedCandle } =
     useFootprintData(symbolState, timeframeState, candleLimit);

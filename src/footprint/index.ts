@@ -1,4 +1,5 @@
 export * from './types';
+export { toSymbol } from './types';
 export { compact, fmtPrice } from './utils/format';
 export { getImbalance, computeVolumeProfile } from './utils/footprint';
 export { searchCoinGecko, fetchBinanceCandles, fetchAggTrades } from './api/binance';
