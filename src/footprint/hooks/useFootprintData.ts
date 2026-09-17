@@ -107,7 +107,7 @@ export function useFootprintData(symbol: string, timeframe: string, candleLimit 
   }, [symbol, timeframe, dataSource, data.length]);
 
   return {
-    data, loading, dataSource, lastUpdate, fetchingTicks,
+    data, loading, lastUpdate, fetchingTicks,
     selectedCandle, setSelectedCandle,
   };
 }

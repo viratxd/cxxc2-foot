@@ -32,8 +32,6 @@ export type FootprintProps = {
   showProfile?: boolean;
   showImbalance?: boolean;
   candleLimit?: number;
-  autoRefresh?: boolean;
-  className?: string;
   onCandleSelect?: (candle: Candle | null) => void;
   onHover?: (info: HoverInfo) => void;
 };

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { BarChart3, Crosshair, Loader2, Maximize2, Minus, MousePointer2, PanelRight, Play, RotateCcw, Settings2, SlidersHorizontal, Sparkles, Wifi, WifiOff, X, Zap, ZoomIn } from 'lucide-react';
-import { COLORS, TIMEFRAMES, toSymbol, type Candle, type FootprintProps, type HoverInfo, type ViewMode } from '../types';
+import { BarChart3, Loader2, Settings2, Sparkles, X, Zap } from 'lucide-react';
+import { TIMEFRAMES, toSymbol, type Candle, type FootprintProps, type HoverInfo, type ViewMode } from '../types';
 import { compact, fmtPrice } from '../utils/format';
 import { getImbalance } from '../utils/footprint';
 import { useFootprintData } from '../hooks/useFootprintData';
@@ -16,7 +16,6 @@ export function Footprint({
   showProfile: initialProfile = true,
   showImbalance: initialImbalance = true,
   candleLimit = 150,
-  className,
   onCandleSelect,
   onHover: onHoverProp,
 }: FootprintProps) {
@@ -33,7 +32,7 @@ export function Footprint({
   useEffect(() => { setSymbol(symbol ?? toSymbol(coin ?? 'BTC')); }, [symbol, coin]);
   useEffect(() => { setTimeframe(timeframe); }, [timeframe]);
 
-  const { data, loading, dataSource, lastUpdate, fetchingTicks, selectedCandle, setSelectedCandle } =
+  const { data, loading, lastUpdate, fetchingTicks, selectedCandle, setSelectedCandle } =
     useFootprintData(symbolState, timeframeState, candleLimit);
 
   const handleHover = (info: HoverInfo) => {
@@ -57,7 +56,6 @@ export function Footprint({
     <main className={darkState ? 'app dark' : 'app'}>
       <section className="terminal">
         <header className="topbar">
-          <div className="brand"><div className="brand-mark"><Crosshair size={17} /></div><span>MARKET<span className="brand-accent">FLOW</span></span></div>
           <CoinSearch symbol={symbolState} onSelect={setSymbol} />
           <div className="toolbar-divider" />
           <div className="timeframes">
@@ -68,9 +66,7 @@ export function Footprint({
           <div className="top-actions">
             <button className={showProfile ? 'active-toggle' : ''} onClick={() => setShowProfile(!showProfile)}><BarChart3 size={16} /> Profile</button>
             <button className={showImbalance ? 'active-toggle' : ''} onClick={() => setShowImbalance(!showImbalance)}><Zap size={16} /> Imbalance</button>
-            <button><SlidersHorizontal size={16} /> Chart</button>
             <button className="icon-button" onClick={() => setDark(!darkState)}><Settings2 size={17} /></button>
-            <button className="icon-button"><Maximize2 size={17} /></button>
           </div>
         </header>
 
@@ -80,9 +76,6 @@ export function Footprint({
             <strong>{symbolState}</strong>
             <span className="muted">·</span>
             <span>{timeframeState}</span>
-            {dataSource === 'binance'
-              ? <span className="binance-pill"><Wifi size={10} /> BINANCE LIVE</span>
-              : <span className="demo-pill"><WifiOff size={10} /> SIMULATED</span>}
             {fetchingTicks && <span className="muted fetching-ticks"><Loader2 size={11} className="spin" /> Fetching tick data…</span>}
           </div>
           {latest && (
@@ -98,17 +91,6 @@ export function Footprint({
         </div>
 
         <div className="workspace">
-          <aside className="left-rail">
-            <button className="rail-active"><Crosshair size={18} /></button>
-            <button><MousePointer2 size={18} /></button>
-            <button><Minus size={18} /></button>
-            <button><ZoomIn size={18} /></button>
-            <button><PanelRight size={18} /></button>
-            <div className="rail-spacer" />
-            <button><RotateCcw size={18} /></button>
-            <button><Settings2 size={18} /></button>
-          </aside>
-
           <div className="chart-shell">
             <div className="mode-switch">
               <button className={mode === 'candles' ? 'active' : ''} onClick={() => { setMode('candles'); setSelectedCandle(-1); }}>Candles</button>
@@ -179,7 +161,6 @@ export function Footprint({
                   <div className="stat-row"><span>Imbalances</span><b>{selectedImbalances} levels</b></div>
                   <div className="stat-row"><span>Footprint</span><b className={selectedCandleData.realFootprint ? 'up-text' : 'muted'}>{selectedCandleData.realFootprint ? 'Real tick data' : 'Estimated'}</b></div>
                 </div>
-                <div className="detail-hint">Click candle again or press X to close</div>
               </div>
             )}
           </div>
@@ -187,7 +168,7 @@ export function Footprint({
 
         <footer className="statusbar">
           <div className="status-left">
-            <span className="status-live"><i /> {dataSource === 'binance' ? 'Binance API' : 'Simulated data'} · {symbolState}</span>
+            <span className="status-live"><i /> {symbolState}</span>
             <span className="muted">Drag to pan</span>
             <span className="muted">Scroll to zoom</span>
             <span className="muted">Click candle to expand footprint</span>
@@ -195,8 +176,6 @@ export function Footprint({
           </div>
           <div className="status-right">
             <span>{data.length} candles</span>
-            {selectedCandle >= 0 && <span className="muted">Candle #{selectedCandle + 1} selected</span>}
-            <button><Play size={13} /> Replay</button>
           </div>
         </footer>
       </section>
